@@ -81,19 +81,11 @@ Vector2 display_visually(Node *node, float shift, float depth) {
       from_left = false;
       DrawLineBezier(vec, (Vector2){x, y}, 3.0, GRAY);
     }
-    // printf("vec %f , vec2 %f", vec.x, x);
-    // printf("drew circle at %f , %f ,  value at node - %d \n", x, y,
-    // node->data);
     if (node->right != NULL) {
       shift += 0.8;
       depth += 0.8;
-      // float x = ((wf / 2.0) + shift) * factor;
-      // float y = (1 + depth) * factor;
-      // printf("right circle at %f , %f ,  value at node - %d \n", x, y,
-      // node->data);
       Vector2 vec2 = display_visually(node->right, shift, depth);
       DrawLineBezier(vec2, (Vector2){x, y}, 3.0, GRAY);
-      // DrawLineV(vec2, (Vector2){x, y}, DARKPURPLE);
     }
   }
   return (Vector2){x, y};
@@ -108,8 +100,6 @@ void render() {
   int val = 0;
   while (!WindowShouldClose()) // Detect window close button or ESC key
   {
-    // update the music stream buffer // this moves it ahead
-    //
     //
     DrawText("Press \"i\" to enter an integer value to tree ", 10, 10, 20,
              RAYWHITE);
