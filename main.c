@@ -130,10 +130,17 @@ int main(int argc, char *argv[]) {
   printf("Creating a tree\n");
   int data;
   printf("value at root %p \n", root);
-  for (int i = 0; i < 5; i++) {
+  bool add = true;
+  while (add) {
     printf("\nEnter int data :- ");
     scanf("%d", &data);
     add_node(&root, data);
+    int choice;
+    printf("\nEnter choice : \n \t 0. To Visualize \n \t 1. To Add more nodes ");
+    scanf("%d", &choice);
+    if (choice == 0) break;
+  }
+  for (int i = 0; i < 5; i++) {
   }
   display_tree(root);
   render();
