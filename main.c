@@ -112,7 +112,7 @@ void render() {
     //
     //
     DrawText("Press \"i\" to enter an integer value to tree ", 10, 10, 20,
-             DARKGRAY);
+             RAYWHITE);
     float x = (wf)*factor;
     float y = (hf)*factor;
     Rectangle rec = (Rectangle){x - 300, y - 70, 50, 30};
@@ -121,7 +121,7 @@ void render() {
       input = true;
     }
     if (input) {
-      DrawText("Enter integer value", x - 300, y - 100, 20, DARKGRAY);
+      DrawText("Enter integer value", x - 300, y - 100, 20, RAYWHITE);
       GuiValueBox(rec, NULL, &val, 0, 255, true);
       char str0[10];
     }
