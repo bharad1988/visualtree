@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define RAYGUI_IMPLEMENTATION
+#include "./src/raygui.h"
+
 typedef struct node {
   int data;
   struct node *right;
@@ -10,8 +13,8 @@ typedef struct node {
 
 // Global variables
 Node *root;
-int wf = 16;
-int hf = 9;
+int wf = 25;
+int hf = 12;
 int factor = 50;
 
 void add_node(Node **node, int value) {
@@ -21,13 +24,13 @@ void add_node(Node **node, int value) {
     new_node->left = NULL;
     new_node->right = NULL;
     *node = new_node;
-    printf("node added with val %d\n", (*node)->data);
+    // printf("node added with val %d\n", (*node)->data);
   } else if (value < (*node)->data) {
     add_node(&(*node)->left, value);
-    printf("Node added to left\n");
+    // printf("Node added to left\n");
   } else if (value >= (*node)->data) {
     add_node(&(*node)->right, value);
-    printf("Node added to right\n");
+    // printf("Node added to right\n");
   }
 }
 
@@ -69,14 +72,15 @@ Vector2 display_visually(Node *node, float shift, float depth) {
     }
     x = ((wf / 2.0) + shift) * factor;
     y = (1 + depth) * factor;
-    if (from_left) {
-      from_left = false;
-      DrawLineBezier(vec, (Vector2){x, y}, 3.0,DARKPURPLE);
-    }
-    DrawCircle(x, y, 20, PURPLE);
+    DrawCircle(x, y, 20, BEIGE);
+
     char str[10];
     sprintf(str, "%d", node->data);
     DrawText(str, x - 10, y - 10, 20, DARKGRAY);
+    if (from_left) {
+      from_left = false;
+      DrawLineBezier(vec, (Vector2){x, y}, 3.0, GRAY);
+    }
     // printf("vec %f , vec2 %f", vec.x, x);
     // printf("drew circle at %f , %f ,  value at node - %d \n", x, y,
     // node->data);
@@ -88,7 +92,7 @@ Vector2 display_visually(Node *node, float shift, float depth) {
       // printf("right circle at %f , %f ,  value at node - %d \n", x, y,
       // node->data);
       Vector2 vec2 = display_visually(node->right, shift, depth);
-      DrawLineBezier(vec2, (Vector2){x, y}, 3.0,DARKPURPLE);
+      DrawLineBezier(vec2, (Vector2){x, y}, 3.0, GRAY);
       // DrawLineV(vec2, (Vector2){x, y}, DARKPURPLE);
     }
   }
@@ -100,9 +104,34 @@ void render() {
   SetTargetFPS(60); // Set our game to run at 60 frames-per-second
   //--------------------------------------------------------------------------------------
   // Main game loop
+  bool input;
+  int val = 0;
   while (!WindowShouldClose()) // Detect window close button or ESC key
   {
     // update the music stream buffer // this moves it ahead
+    //
+    //
+    DrawText("Press \"i\" to enter an integer value to tree ", 10, 10, 20,
+             DARKGRAY);
+    float x = (wf)*factor;
+    float y = (hf)*factor;
+    Rectangle rec = (Rectangle){x - 300, y - 70, 50, 30};
+
+    if (IsKeyPressed(KEY_I)) {
+      input = true;
+    }
+    if (input) {
+      DrawText("Enter integer value", x - 300, y - 100, 20, DARKGRAY);
+      GuiValueBox(rec, NULL, &val, 0, 255, true);
+      char str0[10];
+    }
+    if (IsKeyPressed(KEY_ENTER)) {
+      input = false;
+      printf("value %d \n", val);
+      add_node(&root, val);
+      val = 0;
+    }
+
     Vector2 ballPos = GetMousePosition();
     Color ballColor;
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -112,9 +141,9 @@ void render() {
 
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(DARKGRAY);
     // On pause, we draw a blinking message
-    DrawFPS(10, 10);
+    // DrawFPS(10, 10);
     display_visually(root, 0.0, 0.0);
 
     EndDrawing();
@@ -130,19 +159,8 @@ int main(int argc, char *argv[]) {
   printf("Creating a tree\n");
   int data;
   printf("value at root %p \n", root);
-  bool add = true;
-  while (add) {
-    printf("\nEnter int data :- ");
-    scanf("%d", &data);
-    add_node(&root, data);
-    int choice;
-    printf("\nEnter choice : \n \t 0. To Visualize \n \t 1. To Add more nodes ");
-    scanf("%d", &choice);
-    if (choice == 0) break;
-  }
-  for (int i = 0; i < 5; i++) {
-  }
-  display_tree(root);
+  bool add = false;
+  // display_tree(root);
   render();
   return 0;
 }
