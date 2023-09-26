@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 typedef struct node {
@@ -44,9 +45,13 @@ void display_tree(Node *node) {
   }
 }
 
-void display_visually(Node *node, float shift, float depth) {
+Vector2 display_visually(Node *node, float shift, float depth) {
+  float x, y;
+  Vector2 vec;
+  bool from_left = false;
   if (node == NULL) {
-    return;
+    Vector2 v0;
+    return v0;
   } else {
     if (node->left != NULL) {
       // on return the value at stack was already updated for the root node :?
@@ -55,29 +60,39 @@ void display_visually(Node *node, float shift, float depth) {
       // float x = ((wf / 2.0) + shift) * factor;
       // float y = (1 + depth) * factor;
       // printf("left circle at %f , %f ,  value at node - %d \n", x, y,
-             // node->data);
-      display_visually(node->left, shift, depth);
+      // node->data);
+      vec = display_visually(node->left, shift, depth);
       // reset for after if ***IMP***
       shift += 0.8;
       depth -= 0.8;
+      from_left = true;
     }
-    float x = ((wf / 2.0) + shift) * factor;
-    float y = (1 + depth) * factor;
-    DrawCircle(x, y, 20,PURPLE);
+    x = ((wf / 2.0) + shift) * factor;
+    y = (1 + depth) * factor;
+    if (from_left) {
+      from_left = false;
+      DrawLineBezier(vec, (Vector2){x, y}, 3.0,DARKPURPLE);
+    }
+    DrawCircle(x, y, 20, PURPLE);
     char str[10];
     sprintf(str, "%d", node->data);
-    DrawText(str, x-10, y-10, 20, DARKGRAY);
-    // printf("drew circle at %f , %f ,  value at node - %d \n", x, y, node->data);
+    DrawText(str, x - 10, y - 10, 20, DARKGRAY);
+    // printf("vec %f , vec2 %f", vec.x, x);
+    // printf("drew circle at %f , %f ,  value at node - %d \n", x, y,
+    // node->data);
     if (node->right != NULL) {
       shift += 0.8;
       depth += 0.8;
       // float x = ((wf / 2.0) + shift) * factor;
       // float y = (1 + depth) * factor;
       // printf("right circle at %f , %f ,  value at node - %d \n", x, y,
-             // node->data);
-      display_visually(node->right, shift, depth);
+      // node->data);
+      Vector2 vec2 = display_visually(node->right, shift, depth);
+      DrawLineBezier(vec2, (Vector2){x, y}, 3.0,DARKPURPLE);
+      // DrawLineV(vec2, (Vector2){x, y}, DARKPURPLE);
     }
   }
+  return (Vector2){x, y};
 }
 
 void render() {
@@ -98,8 +113,6 @@ void render() {
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
-    DrawText("PRESS P to PAUSE/PLAY Music ", 20, 25, 20, DARKGRAY);
-    DrawText("PRESS F to enable/disable effects ", 20, 45, 20, DARKGRAY);
     // On pause, we draw a blinking message
     DrawFPS(10, 10);
     display_visually(root, 0.0, 0.0);
@@ -117,7 +130,7 @@ int main(int argc, char *argv[]) {
   printf("Creating a tree\n");
   int data;
   printf("value at root %p \n", root);
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 5; i++) {
     printf("\nEnter int data :- ");
     scanf("%d", &data);
     add_node(&root, data);
